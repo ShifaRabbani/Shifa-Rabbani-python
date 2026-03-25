@@ -24,6 +24,12 @@ conn.execute(text("""
 print("Table 'user_registration' created successfully")
 
 result = conn.execute(text("SELECT COUNT(*) as count FROM user_registration"))
+
+
+
+
+
+
 count = result.fetchone()[0]
 
 # NOW INSERT DATA

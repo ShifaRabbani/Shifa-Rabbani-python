@@ -1,0 +1,820 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Animated Gradient Background */
+.gradient-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.gradient-1, .gradient-2, .gradient-3 {
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    animation: float 20s infinite;
+}
+
+/* Dark Mode Gradients */
+.dark-mode .gradient-1 {
+    background: #4158D0;
+    background: linear-gradient(135deg, #4158D0 0%, #C850C0 100%);
+    top: -20%;
+    left: -10%;
+}
+
+.dark-mode .gradient-2 {
+    background: #0093E9;
+    background: linear-gradient(135deg, #0093E9 0%, #80D0C7 100%);
+    bottom: -20%;
+    right: -10%;
+    animation-delay: -5s;
+}
+
+.dark-mode .gradient-3 {
+    background: #8EC5FC;
+    background: linear-gradient(135deg, #8EC5FC 0%, #E0C3FC 100%);
+    top: 40%;
+    left: 40%;
+    animation-delay: -10s;
+}
+
+/* Light Mode Gradients - More subtle */
+.light-mode .gradient-1 {
+    background: #FF6B6B;
+    background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+    top: -20%;
+    left: -10%;
+    opacity: 0.15;
+}
+
+.light-mode .gradient-2 {
+    background: #A8E6CF;
+    background: linear-gradient(135deg, #A8E6CF 0%, #FFD3B6 100%);
+    bottom: -20%;
+    right: -10%;
+    animation-delay: -5s;
+    opacity: 0.15;
+}
+
+.light-mode .gradient-3 {
+    background: #FFAAA5;
+    background: linear-gradient(135deg, #FFAAA5 0%, #FFE5E5 100%);
+    top: 40%;
+    left: 40%;
+    animation-delay: -10s;
+    opacity: 0.15;
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(5%, 5%) scale(1.1); }
+    66% { transform: translate(-5%, -5%) scale(0.9); }
+}
+
+/* App Container */
+.app-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Glassmorphism */
+.glass {
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+/* Dark Mode Glass */
+.dark-mode .glass {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Light Mode Glass - More visible */
+.light-mode .glass {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Header */
+.glass-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    margin-bottom: 25px;
+    border-radius: 30px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo i {
+    font-size: 24px;
+    color: #8B5CF6;
+}
+
+.logo h1 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.dark-mode .logo h1 {
+    color: white;
+}
+
+.light-mode .logo h1 {
+    color: #1a1a1a;
+    font-weight: 700;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.icon-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.3s ease;
+}
+
+.dark-mode .icon-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.light-mode .icon-btn {
+    background: rgba(0, 0, 0, 0.05);
+    color: #333;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.icon-btn:hover {
+    transform: scale(1.1);
+}
+
+.dark-mode .icon-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.light-mode .icon-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* Timer Card */
+.timer-card {
+    padding: 30px;
+    margin-bottom: 20px;
+}
+
+.timer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.badge {
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, #8B5CF6, #EC4899);
+    color: white;
+}
+
+.timer-presets {
+    display: flex;
+    gap: 8px;
+}
+
+.preset-chip {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dark-mode .preset-chip {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.light-mode .preset-chip {
+    background: rgba(0, 0, 0, 0.05);
+    color: #333;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.preset-chip:hover {
+    transform: translateY(-2px);
+}
+
+.dark-mode .preset-chip:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.light-mode .preset-chip:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.preset-chip.active {
+    background: linear-gradient(135deg, #8B5CF6, #EC4899);
+    color: white;
+    border: none;
+}
+
+/* Timer Circle */
+.timer-circle-wrapper {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    margin: 0 auto 30px;
+}
+
+.timer-progress {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.progress-bg {
+    fill: none;
+    stroke-width: 8;
+}
+
+.dark-mode .progress-bg {
+    stroke: rgba(255, 255, 255, 0.1);
+}
+
+.light-mode .progress-bg {
+    stroke: rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar {
+    fill: none;
+    stroke: url(#gradient);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.3s;
+}
+
+.timer-display {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 48px;
+    font-weight: 700;
+}
+
+.dark-mode .timer-display {
+    color: white;
+}
+
+.light-mode .timer-display {
+    color: #1a1a1a;
+}
+
+/* Timer Controls */
+.timer-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.control-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+/* Timer Controls */
+.timer-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.control-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+/* Start button always purple */
+#startBtn {
+    background: linear-gradient(135deg, #8B5CF6, #EC4899);
+    color: white;
+}
+
+/* Pause and Reset buttons - different style */
+#pauseBtn, #resetBtn {
+    background: transparent;
+    border: 2px solid #8B5CF6;
+    color: #8B5CF6;
+}
+
+.dark-mode #pauseBtn, .dark-mode #resetBtn {
+    border-color: #8B5CF6;
+    color: #8B5CF6;
+}
+
+.light-mode #pauseBtn, .light-mode #resetBtn {
+    border-color: #8B5CF6;
+    color: #8B5CF6;
+}
+
+/* Hover effects */
+#pauseBtn:hover, #resetBtn:hover {
+    background: #8B5CF6;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+}
+
+#startBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+}
+
+.dark-mode .control-btn:not(.primary) {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.light-mode .control-btn:not(.primary) {
+    background: rgba(0, 0, 0, 0.05);
+    color: #333;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.control-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(139, 92, 246, 0.2);
+}
+
+/* Custom Time Input */
+.custom-time-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px;
+}
+
+.custom-time-input i {
+    color: #8B5CF6;
+}
+
+.custom-time-input input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 15px;
+    font-size: 14px;
+}
+
+.dark-mode .custom-time-input input {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.light-mode .custom-time-input input {
+    background: rgba(0, 0, 0, 0.05);
+    color: #333;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.custom-time-input input:focus {
+    outline: none;
+}
+
+.dark-mode .custom-time-input input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.light-mode .custom-time-input input::placeholder {
+    color: rgba(0, 0, 0, 0.4);
+}
+
+.custom-time-input button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.dark-mode .custom-time-input button {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.light-mode .custom-time-input button {
+    background: rgba(0, 0, 0, 0.05);
+    color: #333;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.custom-time-input button:hover {
+    background: rgba(139, 92, 246, 0.3);
+}
+
+/* Save Section */
+.save-section {
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.save-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.save-header i {
+    color: #8B5CF6;
+}
+
+.save-header h3 {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.dark-mode .save-header h3 {
+    color: white;
+}
+
+.light-mode .save-header h3 {
+    color: #1a1a1a;
+    font-weight: 600;
+}
+
+.save-input-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.save-input-group input {
+    flex: 2;
+    min-width: 200px;
+    padding: 12px;
+    border: none;
+    border-radius: 15px;
+    font-size: 14px;
+}
+
+.dark-mode .save-input-group input {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.light-mode .save-input-group input {
+    background: rgba(0, 0, 0, 0.05);
+    color: #333;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .save-input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.light-mode .save-input-group input::placeholder {
+    color: rgba(0, 0, 0, 0.4);
+}
+
+.save-btn, .cancel-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.save-btn {
+    background: linear-gradient(135deg, #8B5CF6, #EC4899);
+    color: white;
+}
+
+.cancel-btn {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .cancel-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.light-mode .cancel-btn {
+    background: rgba(0, 0, 0, 0.05);
+    color: #333;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.save-btn:hover, .cancel-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Saved Timers Section */
+.saved-section {
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-header i {
+    color: #8B5CF6;
+}
+
+.section-header h3 {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.dark-mode .section-header h3 {
+    color: white;
+}
+
+.light-mode .section-header h3 {
+    color: #1a1a1a;
+    font-weight: 600;
+}
+
+.timer-count {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #8B5CF6, #EC4899);
+    color: white;
+}
+
+.timer-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.empty-state i {
+    font-size: 40px;
+    color: #8B5CF6;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+.empty-state p {
+    font-size: 14px;
+}
+
+.dark-mode .empty-state p {
+    color: white;
+    opacity: 0.7;
+}
+
+.light-mode .empty-state p {
+    color: #1a1a1a;
+    opacity: 0.6;
+}
+
+.timer-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.dark-mode .timer-item {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.light-mode .timer-item {
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.timer-item:hover {
+    transform: translateX(5px);
+    background: rgba(139, 92, 246, 0.1);
+}
+
+.timer-item.editing {
+    border: 2px solid #8B5CF6;
+    background: rgba(139, 92, 246, 0.1);
+}
+
+.timer-item-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.timer-item-info span {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.dark-mode .timer-item-info span {
+    color: white;
+}
+
+.light-mode .timer-item-info span {
+    color: #1a1a1a;
+}
+
+.timer-item-info small {
+    font-size: 12px;
+}
+
+.dark-mode .timer-item-info small {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.light-mode .timer-item-info small {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.timer-item-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.timer-item-actions button {
+    width: 35px;
+    height: 35px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.timer-item-actions button:hover {
+    transform: scale(1.1);
+}
+
+.load-btn {
+    background: #3B82F6 !important;
+    color: white !important;
+}
+
+.edit-btn {
+    background: #10B981 !important;
+    color: white !important;
+}
+
+.delete-btn {
+    background: #EF4444 !important;
+    color: white !important;
+}
+
+/* Quote Card */
+.quote-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+}
+
+.quote-card i {
+    font-size: 24px;
+    color: #8B5CF6;
+    opacity: 0.5;
+}
+
+.quote-card p {
+    font-size: 14px;
+    font-style: italic;
+}
+
+.dark-mode .quote-card p {
+    color: white;
+}
+
+.light-mode .quote-card p {
+    color: #1a1a1a;
+}
+
+/* Scrollbar */
+.timer-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.timer-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.dark-mode .timer-list::-webkit-scrollbar-thumb {
+    background: #8B5CF6;
+    border-radius: 10px;
+}
+
+.light-mode .timer-list::-webkit-scrollbar-thumb {
+    background: #8B5CF6;
+    border-radius: 10px;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+    .app-container {
+        padding: 15px;
+    }
+    
+    .timer-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .timer-presets {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .save-input-group {
+        flex-direction: column;
+    }
+    
+    .save-btn, .cancel-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

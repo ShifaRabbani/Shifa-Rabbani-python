@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FocusFlow • Study Timer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="dark-mode">
+    <!-- Animated Background -->
+    <div class="gradient-bg">
+        <div class="gradient-1"></div>
+        <div class="gradient-2"></div>
+        <div class="gradient-3"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Header with Glassmorphism -->
+        <div class="glass-header">
+            <div class="logo">
+                <i class="fas fa-brain"></i>
+                <h1>FocusFlow</h1>
+            </div>
+            <div class="header-actions">
+                <button id="themeToggle" class="icon-btn glass">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="icon-btn glass">
+                    <i class="fas fa-chart-line"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Timer Card -->
+        <div class="timer-card glass">
+            <div class="timer-header">
+                <span class="badge">focus session</span>
+                <div class="timer-presets">
+                    <button class="preset-chip active" data-minutes="5">5m</button>
+                    <button class="preset-chip" data-minutes="15">15m</button>
+                    <button class="preset-chip" data-minutes="25">25m</button>
+                    <button class="preset-chip" data-minutes="45">45m</button>
+                    <button class="preset-chip" data-minutes="60">60m</button>
+                </div>
+            </div>
+
+            <!-- Animated Timer Circle -->
+            <div class="timer-circle-wrapper">
+                <svg class="timer-progress" viewBox="0 0 100 100">
+                    <circle class="progress-bg" cx="50" cy="50" r="45"></circle>
+                    <circle class="progress-bar" cx="50" cy="50" r="45"></circle>
+                </svg>
+                <div class="timer-display" id="timer">25:00</div>
+            </div>
+
+            <!-- Timer Controls -->
+          <div class="timer-controls">
+    <button id="startBtn" class="control-btn">
+        <i class="fas fa-play"></i>
+        <span>Start</span>
+    </button>
+    <button id="pauseBtn" class="control-btn">
+        <i class="fas fa-pause"></i>
+    </button>
+    <button id="resetBtn" class="control-btn">
+        <i class="fas fa-undo-alt"></i>
+    </button>
+</div>
+
+            <!-- Custom Time Input -->
+            <div class="custom-time-input">
+                <i class="fas fa-clock"></i>
+                <input type="number" id="customMinutes" placeholder="Custom minutes" min="1" max="999">
+                <button id="setCustomBtn" class="glass">Set</button>
+            </div>
+        </div>
+
+        <!-- Save Timer Section -->
+        <div class="save-section glass">
+            <div class="save-header">
+                <i class="fas fa-bookmark"></i>
+                <h3>Save Current Timer</h3>
+            </div>
+            <div class="save-input-group">
+                <input type="text" id="timerNameInput" placeholder="Enter timer name (e.g., 'Math Study')">
+                <button id="saveCurrentBtn" class="save-btn glass">
+                    <i class="fas fa-save"></i>
+                    <span>Save</span>
+                </button>
+                <button id="cancelEditBtn" class="cancel-btn glass" style="display: none;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Saved Timers Section -->
+        <div class="saved-section glass">
+            <div class="section-header">
+                <div>
+                    <i class="fas fa-history"></i>
+                    <h3>Your Timers</h3>
+                </div>
+                <span class="timer-count" id="timerCount">0</span>
+            </div>
+            
+            <div class="timer-list" id="timerList">
+                <!-- Saved timers will appear here -->
+                <div class="empty-state">
+                    <i class="fas fa-hourglass-start"></i>
+                    <p>No timers yet. Save your first timer!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Motivational Quote -->
+        <div class="quote-card glass">
+            <i class="fas fa-quote-right"></i>
+            <p id="motivationalQuote">"The secret of getting ahead is getting started."</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
