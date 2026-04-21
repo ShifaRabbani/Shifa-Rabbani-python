@@ -32,6 +32,7 @@ def create_invoice():
     product_id = payload.get("product_id")
     quantity = payload.get("quantity")
     customer_info = payload.get("customer_info")
+    
     if product_id is None:
         return jsonify({"error":"product_id is required"}), 400
     if quantity is None :
@@ -112,8 +113,77 @@ def create_invoice():
 # }
 
 
+# DELETE method - Delete an invoice by ID
+@invoice_bp.route("/<int:id>", methods=["DELETE"])
+def delete_invoice(id):
+    engine = get_engine()
+    with engine.begin() as conn:
+        result = conn.execute(
+            db.text("DELETE FROM invoice WHERE id = :id"),
+            {"id": id}
+        )
+    
+    if result.rowcount == 0:
+        return jsonify({"error": "Invoice not found"}), 404
+    
+    return jsonify({"message": "Invoice deleted successfully"}), 200
 
 
+# PUT method - Update an invoice by ID
+# {
+#     "product_id": 1,
+#     "quantity": 5,
+#     "customer_info": "Updated Customer"
+# }
 
-
-
+@invoice_bp.route("/<int:id>", methods=["PUT"])
+def update_invoice(id):
+    payload = request.get_json(silent=True) or {}
+    product_id = payload.get("product_id")
+    quantity = payload.get("quantity")
+    customer_info = payload.get("customer_info")
+    
+    if not product_id:
+        return jsonify({"error": "product_id is required"}), 400
+    
+    try:
+        quantity = int(quantity)
+    except (TypeError, ValueError):
+        return jsonify({"error": "quantity must be integer"}), 400
+    
+    if quantity <= 0:
+        return jsonify({"error": "quantity must be positive"}), 400
+    
+    engine = get_engine()
+    with engine.begin() as conn:
+        # Get product price
+        product = conn.execute(
+            db.text("SELECT price FROM product WHERE id = :product_id"),
+            {"product_id": product_id}
+        ).first()
+        
+        if not product:
+            return jsonify({"error": "Product not found"}), 404
+        
+        total_amount = float(product.price) * quantity
+        
+        # Update invoice
+        result = conn.execute(
+            db.text(
+                "UPDATE invoice SET product_id = :product_id, quantity = :quantity, "
+                "total_amount = :total_amount, customer_info = :customer_info "
+                "WHERE id = :id"
+            ),
+            {
+                "product_id": product_id,
+                "quantity": quantity,
+                "total_amount": total_amount,
+                "customer_info": customer_info,
+                "id": id
+            }
+        )
+    
+    if result.rowcount == 0:
+        return jsonify({"error": "Invoice not found"}), 404
+    
+    return jsonify({"message": "Invoice updated successfully"}), 200
