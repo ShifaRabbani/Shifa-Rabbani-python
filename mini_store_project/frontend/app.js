@@ -3,10 +3,10 @@ const API_URL = 'http://localhost:5000';
 // State Management
 let state = {
     token: localStorage.getItem('token') || null,
-    user: null, // we will decode or fetch user later
+    user: null,
     products: [],
     stock: [],
-    cart: [] // { productId, name, price, quantity }
+    cart: []
 };
 
 // DOM Elements
@@ -22,13 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     updateAuthUI();
     setupEventListeners();
+    setupImageUpload();
     fetchProducts();
     fetchStock();
-    fetchInvoices(); // Admin
+    fetchInvoices();
 });
 
 function setupEventListeners() {
-    // Navigation
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
@@ -40,7 +40,6 @@ function setupEventListeners() {
         navigateTo('cart-section');
     });
 
-    // Theme Toggle
     themeToggle.addEventListener('click', () => {
         document.body.classList.toggle('dark-mode');
         const isDark = document.body.classList.contains('dark-mode');
@@ -48,7 +47,6 @@ function setupEventListeners() {
         themeToggle.innerHTML = isDark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
     });
 
-    // Logout
     logoutBtn.addEventListener('click', () => {
         localStorage.removeItem('token');
         state.token = null;
@@ -58,60 +56,11 @@ function setupEventListeners() {
         navigateTo('home-section');
     });
 
-    // Auth Modal
-    const closeModalBtn = document.querySelector('.back-link');
-    if (closeModalBtn) closeModalBtn.addEventListener('click', closeAuthModal);
-    
-    // Toggle Password Visibility
-    document.querySelectorAll('.toggle-password').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const input = this.previousElementSibling;
-            if (input.type === 'password') {
-                input.type = 'text';
-                this.innerHTML = '<i class="fa-regular fa-eye-slash"></i>';
-            } else {
-                input.type = 'password';
-                this.innerHTML = '<i class="fa-regular fa-eye"></i>';
-            }
-        });
-    });
-    
-    document.querySelectorAll('.auth-tab').forEach(tab => {
-        tab.addEventListener('click', (e) => {
-            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-            e.target.classList.add('active');
-            document.querySelectorAll('.auth-form').forEach(f => f.classList.add('hidden'));
-            const formTarget = document.getElementById(e.target.dataset.form);
-            if(formTarget) formTarget.classList.remove('hidden');
-        });
-    });
-
-    // Forms
-    const loginForm = document.getElementById('login-form');
-    if (loginForm) loginForm.addEventListener('submit', handleLogin);
-    
-    const registerForm = document.getElementById('register-form');
-    if (registerForm) registerForm.addEventListener('submit', handleRegister);
-    
-    // Admin Tabs
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            e.target.classList.add('active');
-            document.getElementById(`tab-${e.target.dataset.tab}`).classList.add('active');
-        });
-    });
-
-    // Admin Action Forms
     document.getElementById('add-product-form').addEventListener('submit', handleAddProduct);
     document.getElementById('update-stock-form').addEventListener('submit', handleUpdateStock);
-    
-    // Checkout
     document.getElementById('checkout-btn').addEventListener('click', handleCheckout);
 }
 
-// ---- Navigation & UI Update ----
 function navigateTo(targetId) {
     sections.forEach(sec => sec.classList.add('hidden'));
     document.getElementById(targetId).classList.remove('hidden');
@@ -123,10 +72,13 @@ function navigateTo(targetId) {
         }
     });
 
-    if (targetId === 'products-section') fetchProducts();
+    if (targetId === 'products-section') {
+        console.log('Loading products...');
+        fetchProducts();
+    }
     if (targetId === 'cart-section') renderCart();
     if (targetId === 'admin-section') {
-        fetchProducts(); 
+        fetchProducts();
         fetchStock();
         fetchInvoices();
     }
@@ -147,7 +99,7 @@ function updateAuthUI() {
     if (state.token) {
         authBtn.classList.add('hidden');
         logoutBtn.classList.remove('hidden');
-        adminOnlyElems.forEach(el => el.style.display = 'block'); // Assuming generic user is admin for this dashboard
+        adminOnlyElems.forEach(el => el.style.display = 'block');
     } else {
         authBtn.classList.remove('hidden');
         logoutBtn.classList.add('hidden');
@@ -159,20 +111,18 @@ function showToast(message, isError = false) {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
     toast.className = 'toast';
-    if (isError) toast.style.borderLeftColor = 'var(--danger)';
+    if (isError) toast.style.borderLeftColor = '#ff7675';
     toast.innerText = message;
     container.appendChild(toast);
     setTimeout(() => toast.remove(), 3000);
 }
 
 function openAuthModal() { window.location.href = 'login.html'; }
-function closeAuthModal() { 
+function closeAuthModal() {
     const modal = document.getElementById('auth-fullscreen');
-    if(modal) modal.classList.add('hidden'); 
+    if (modal) modal.classList.add('hidden');
 }
 
-
-// ---- Auth API ----
 async function handleLogin(e) {
     e.preventDefault();
     const email = document.getElementById('login-email').value;
@@ -187,9 +137,9 @@ async function handleLogin(e) {
             body: JSON.stringify({ email, password })
         });
         const data = await res.json();
-        
+
         if (!res.ok) throw new Error(data.error || 'Login failed');
-        
+
         state.token = data.access_token;
         localStorage.setItem('token', data.access_token);
         updateAuthUI();
@@ -216,42 +166,46 @@ async function handleRegister(e) {
             body: JSON.stringify({ email, phone, password })
         });
         const data = await res.json();
-        
+
         if (!res.ok) throw new Error(data.error || 'Registration failed');
-        
+
         showToast('Registration successful! Please login.');
-        document.querySelector('[data-form="login-form"]').click(); // switch to login
+        document.querySelector('[data-form="login-form"]').click();
         document.getElementById('register-form').reset();
     } catch (err) {
         errBox.innerText = err.message;
     }
 }
 
-// ==== Helper to safely fetch ====
 async function apiFetch(endpoint, options = {}) {
     const headers = { 'Content-Type': 'application/json', ...options.headers };
     if (state.token) headers['Authorization'] = `Bearer ${state.token}`;
-    
-    // We pass the full URL directly here
-    const url = endpoint.startsWith('http') ? endpoint : `${API_URL}${endpoint}`;
 
+    const url = endpoint.startsWith('http') ? endpoint : `${API_URL}${endpoint}`;
     const res = await fetch(url, { ...options, headers });
     return res;
 }
 
-
-// ---- Products & Stock ----
 async function fetchProducts() {
     try {
+        console.log('Fetching products...');
         const res = await apiFetch('/products');
         const data = await res.json();
+        console.log('Products received:', data);
+
         if (res.ok && data.data) {
             state.products = data.data;
+            console.log('State products updated:', state.products.length);
             renderProducts();
             populateAdminProductSelects();
             renderAdminProducts();
+        } else {
+            console.error('Failed to fetch products:', data);
         }
-    } catch (err) { console.error('Failed to load products', err); }
+    } catch (err) {
+        console.error('Failed to load products', err);
+        showToast('Failed to load products: ' + err.message, true);
+    }
 }
 
 async function fetchStock() {
@@ -260,7 +214,7 @@ async function fetchStock() {
         const data = await res.json();
         if (res.ok && data.data) {
             state.stock = data.data;
-            renderProducts(); // Re-render to show updated stock
+            renderProducts();
             renderAdminStock();
         }
     } catch (err) { console.error('Failed to load stock', err); }
@@ -273,65 +227,107 @@ function getProductStock(productId) {
 
 function renderProducts() {
     const grid = document.getElementById('products-grid');
-    grid.innerHTML = '';
-    
+    if (!grid) return;
+
     if (state.products.length === 0) {
         grid.innerHTML = '<p class="text-muted">No products found.</p>';
         return;
     }
 
+    grid.innerHTML = '';
+
     state.products.forEach(p => {
         const stockAmt = getProductStock(p.id);
-        const card = document.createElement('div');
-        card.className = 'product-card glass-panel';
-        card.innerHTML = `
-            <div>
+        grid.innerHTML += `
+            <div class="product-card glass-panel">
+                ${p.image_url && p.image_url.includes('/static/') ?
+                `<img src="${p.image_url}" class="product-image" onerror="this.src='https://placehold.co/400x400?text=No+Image'">` :
+                `<div class="product-image" style="background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; height: 200px; border-radius: 12px;">
+                        <i class="fa-solid fa-image" style="font-size: 3rem; opacity: 0.5;"></i>
+                    </div>`
+            }
+                <div class="category-badge">${p.category || 'Uncategorized'}</div>
                 <h3>${p.name}</h3>
-                <p class="stock">Stock Available: ${stockAmt}</p>
+                ${p.description ? `<p class="text-muted">${p.description.substring(0, 80)}</p>` : ''}
+                <p class="stock">Stock: ${stockAmt}</p>
                 <p class="price">$${parseFloat(p.price).toFixed(2)}</p>
+                <button class="btn primary-btn" onclick="addToCart(${p.id}, '${p.name}', ${p.price}, ${stockAmt})">
+                    Add to Cart
+                </button>
             </div>
-            <button class="btn primary-btn ${stockAmt === 0 ? 'outline-btn' : ''}" 
-                    onclick="addToCart(${p.id}, '${p.name}', ${p.price}, ${stockAmt})"
-                    ${stockAmt === 0 ? 'disabled' : ''}>
-                ${stockAmt === 0 ? 'Out of Stock' : 'Add to Cart'}
-            </button>
         `;
-        grid.appendChild(card);
+    });
+}
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function (m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
     });
 }
 
 function populateAdminProductSelects() {
     const select = document.getElementById('stock-product-select');
+    if (!select) return;
     select.innerHTML = '<option value="" disabled selected>Select Product</option>';
     state.products.forEach(p => {
-        select.innerHTML += `<option value="${p.id}">${p.id} - ${p.name}</option>`;
+        select.innerHTML += `<option value="${p.id}">${p.id} - ${escapeHtml(p.name)}</option>`;
     });
 }
 
 async function handleAddProduct(e) {
     e.preventDefault();
-    const name = document.getElementById('new-product-name').value;
-    const price = document.getElementById('new-product-price').value;
+
+    const name = document.getElementById('new-product-name')?.value;
+    const price = document.getElementById('new-product-price')?.value;
+    const category = document.getElementById('new-product-category')?.value;
+    const description = document.getElementById('new-product-description')?.value;
+    const imageUrl = document.getElementById('product-image-url')?.value;
+
+    if (!name || !price) {
+        showToast('Name and price are required', true);
+        return;
+    }
 
     try {
         const res = await apiFetch('/products', {
             method: 'POST',
-            body: JSON.stringify({ name, price })
+            body: JSON.stringify({
+                name,
+                price,
+                category: category || 'Uncategorized',
+                description: description || '',
+                image_url: imageUrl || null
+            })
         });
-        if (!res.ok) throw new Error('Failed to add product');
-        
+
+        if (!res.ok) {
+            const error = await res.json();
+            throw new Error(error.error || 'Failed to add product');
+        }
+
         showToast('Product added successfully!');
-        document.getElementById('add-product-form').reset();
-        fetchProducts(); // refresh
-    } catch(err) {
+        document.getElementById('add-product-form')?.reset();
+        document.getElementById('image-preview-container').innerHTML = '';
+        document.getElementById('product-image-url').value = '';
+        fetchProducts();
+        fetchStock();
+    } catch (err) {
         showToast(err.message, true);
     }
 }
 
 async function handleUpdateStock(e) {
     e.preventDefault();
-    const product_id = document.getElementById('stock-product-select').value;
-    const quantity = document.getElementById('stock-quantity').value;
+    const product_id = document.getElementById('stock-product-select')?.value;
+    const quantity = document.getElementById('stock-quantity')?.value;
+
+    if (!product_id) {
+        showToast('Please select a product', true);
+        return;
+    }
 
     try {
         const res = await apiFetch('/stock', {
@@ -342,24 +338,25 @@ async function handleUpdateStock(e) {
             const data = await res.json();
             throw new Error(data.error || 'Failed to update stock');
         }
-        
+
         showToast('Stock updated successfully!');
-        document.getElementById('update-stock-form').reset();
-        fetchStock(); // refresh
-    } catch(err) {
+        document.getElementById('update-stock-form')?.reset();
+        fetchStock();
+    } catch (err) {
         showToast(err.message, true);
     }
 }
 
 function renderAdminProducts() {
     const list = document.getElementById('admin-product-list');
+    if (!list) return;
     list.innerHTML = '';
     state.products.forEach(p => {
         list.innerHTML += `
             <div class="list-item">
                 <div>
-                    <strong>ID: ${p.id}</strong> - ${p.name}
-                    <div class="text-muted">Price: $${p.price}</div>
+                    <strong>ID: ${p.id}</strong> - ${escapeHtml(p.name)}
+                    <div class="text-muted">Price: $${p.price} | Category: ${escapeHtml(p.category || 'Uncategorized')}</div>
                 </div>
             </div>
         `;
@@ -368,27 +365,86 @@ function renderAdminProducts() {
 
 function renderAdminStock() {
     const list = document.getElementById('admin-stock-list');
+    if (!list) return;
     list.innerHTML = '';
     state.stock.forEach(s => {
         list.innerHTML += `
             <div class="list-item">
                 <div>
-                    <strong>Product ID: ${s.product_id} (${s.product_name})</strong>
-                    <div class="text-muted">Quantity: ${s.quantity} | Updated at: ${new Date(s.updated_at).toLocaleString()}</div>
+                    <strong>Product ID: ${s.product_id} (${escapeHtml(s.product_name)})</strong>
+                    <div class="text-muted">Quantity: ${s.quantity}</div>
                 </div>
             </div>
         `;
     });
 }
 
+async function uploadProductImage(file) {
+    const formData = new FormData();
+    formData.append('image', file);
 
-// ---- Cart & Invoice API ----
-function addToCart(id, name, price, maxStock) {
-    if (!state.token && !confirm("You might need to login to complete checkout. Proceed?")) {
-        openAuthModal();
-        return;
+    try {
+        const res = await fetch(`${API_URL}/upload`, {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            return data.image_url;
+        } else {
+            throw new Error(data.error || 'Upload failed');
+        }
+    } catch (err) {
+        showToast('Image upload failed: ' + err.message, true);
+        return null;
     }
+}
 
+function setupImageUpload() {
+    const uploadArea = document.getElementById('upload-area');
+    const fileInput = document.getElementById('product-image-input');
+
+    if (!uploadArea) return;
+
+    uploadArea.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+            const previewContainer = document.getElementById('image-preview-container');
+            if (previewContainer) {
+                previewContainer.innerHTML = `
+                    <div style="position: relative; display: inline-block;">
+                        <img src="${ev.target.result}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; margin-top: 10px;">
+                        <button type="button" onclick="removeImage()" style="position: absolute; top: -8px; right: -8px; background: red; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer;">×</button>
+                    </div>
+                `;
+            }
+        };
+        reader.readAsDataURL(file);
+
+        showToast('Uploading image...');
+        const imageUrl = await uploadProductImage(file);
+        if (imageUrl) {
+            document.getElementById('product-image-url').value = imageUrl;
+            showToast('Image uploaded successfully!');
+        }
+    });
+}
+
+window.removeImage = function () {
+    document.getElementById('image-preview-container').innerHTML = '';
+    document.getElementById('product-image-url').value = '';
+    document.getElementById('product-image-input').value = '';
+};
+
+function addToCart(id, name, price, maxStock) {
     const existing = state.cart.find(item => item.productId === id);
     if (existing) {
         if (existing.quantity >= maxStock) {
@@ -399,24 +455,27 @@ function addToCart(id, name, price, maxStock) {
     } else {
         state.cart.push({ productId: id, name, price, quantity: 1, maxStock });
     }
-    
+
     updateCartUI();
     showToast(`${name} added to cart`);
 }
 
 function updateCartUI() {
-    // Update badge
     const totalItems = state.cart.reduce((sum, item) => sum + item.quantity, 0);
-    document.getElementById('cart-count').innerText = totalItems;
-    if(document.getElementById('cart-section').classList.contains('hidden') === false) {
+    const cartCount = document.getElementById('cart-count');
+    if (cartCount) cartCount.innerText = totalItems;
+
+    const cartSection = document.getElementById('cart-section');
+    if (cartSection && !cartSection.classList.contains('hidden')) {
         renderCart();
     }
 }
 
 function renderCart() {
     const list = document.getElementById('cart-items');
+    if (!list) return;
     list.innerHTML = '';
-    
+
     if (state.cart.length === 0) {
         list.innerHTML = '<p class="empty-state">Your cart is empty.</p>';
         document.getElementById('summary-items').innerText = '0';
@@ -438,7 +497,7 @@ function renderCart() {
         el.className = 'cart-item glass-panel';
         el.innerHTML = `
             <div class="cart-item-details">
-                <h4>${item.name}</h4>
+                <h4>${escapeHtml(item.name)}</h4>
                 <p class="text-muted">$${parseFloat(item.price).toFixed(2)} each</p>
             </div>
             <div class="cart-controls">
@@ -453,22 +512,16 @@ function renderCart() {
     document.getElementById('summary-total').innerText = '$' + totals.toFixed(2);
 }
 
-function removeFromCart(id) {
+window.removeFromCart = function (id) {
     state.cart = state.cart.filter(item => item.productId !== id);
     updateCartUI();
-}
+};
 
 async function handleCheckout() {
-    const customerInfo = document.getElementById('customer-info').value.trim();
+    const customerInfo = document.getElementById('customer-info')?.value.trim();
     if (!customerInfo) {
         showToast('Please enter shipping/customer information', true);
         return;
-    }
-
-    if (state.cart.length > 1) {
-        // Backend API only accepts one product per invoice currently!
-        // We will loop and create multiple invoices or warn them.
-        showToast('Processing multiple items as separate invoices...', false);
     }
 
     for (const item of state.cart) {
@@ -482,19 +535,17 @@ async function handleCheckout() {
                 })
             });
             const data = await res.json();
-            if(!res.ok) throw new Error(data.error || 'Failed to checkout item ' + item.name);
-            
+            if (!res.ok) throw new Error(data.error || 'Failed to checkout');
             showToast(`Purchased ${item.name}!`);
-        } catch(err) {
+        } catch (err) {
             showToast(err.message, true);
         }
     }
 
-    // Clear cart and refresh
     state.cart = [];
     document.getElementById('customer-info').value = '';
     updateCartUI();
-    fetchStock(); 
+    fetchStock();
     fetchInvoices();
 }
 
@@ -505,23 +556,23 @@ async function fetchInvoices() {
         if (res.ok && data.data) {
             renderAdminInvoices(data.data);
         }
-    } catch(err) { console.error('Failed to load invoices', err); }
+    } catch (err) { console.error('Failed to load invoices', err); }
 }
 
 function renderAdminInvoices(invoices) {
     const list = document.getElementById('admin-invoice-list');
+    if (!list) return;
     list.innerHTML = '';
     invoices.forEach(inv => {
         list.innerHTML += `
             <div class="list-item">
                 <div>
                     <strong>Invoice #${inv.id}</strong>
-                    <div>Customer: ${inv.customer_info}</div>
-                    <div class="text-muted">Product ID: ${inv.product_id} (${inv.product_name}) | Qty: ${inv.quantity}</div>
+                    <div>Customer: ${escapeHtml(inv.customer_info)}</div>
+                    <div class="text-muted">Product: ${escapeHtml(inv.product_name)} | Qty: ${inv.quantity}</div>
                 </div>
                 <div style="text-align: right">
                     <strong>$${parseFloat(inv.total_amount).toFixed(2)}</strong>
-                    <div class="text-muted" style="font-size: 0.8rem">${new Date(inv.created_at).toLocaleString()}</div>
                 </div>
             </div>
         `;

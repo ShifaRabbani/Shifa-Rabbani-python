@@ -1,407 +1,722 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In - Mini Store</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome for Icons -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, height=device-height">
+    <title>Mini Store | Auth Portal — Theme Sync</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* LIGHT MODE VARIABLES (default fallback) */
         :root {
-            /* Light Mode Palette */
-            --bg-color: #f5f7fa;
-            --text-color: #333333;
-            --text-muted: #777777;
-            --card-bg: rgba(255, 255, 255, 0.9);
-            --border-color: rgba(0, 0, 0, 0.1);
+            --bg-gradient-start: #f8fafc;
+            --bg-gradient-end: #eef2f5;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --text-primary: #1f2937;
+            --text-muted: #5b6e8c;
             --primary: #6c5ce7;
             --primary-hover: #5b4bc4;
             --accent: #00cec9;
-            --danger: #ff7675;
-            --success: #00b894;
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
-            --input-bg: rgba(0, 0, 0, 0.03);
-            --input-focus: rgba(0, 0, 0, 0.05);
-            --tab-bg: rgba(0, 0, 0, 0.05);
+            --shadow: 0 20px 35px rgba(0, 0, 0, 0.08);
+            --input-bg: rgba(0, 0, 0, 0.02);
+            --trust-badge-bg: rgba(0, 0, 0, 0.03);
         }
 
-        .dark-mode {
-            /* Dark Mode Palette */
-            --bg-color: #0d0e15;
-            --text-color: #f0f0f0;
-            --text-muted: #a0a0a0;
-            --card-bg: rgba(20, 22, 35, 0.8);
-            --border-color: rgba(255, 255, 255, 0.1);
+        /* DARK MODE — seamless with store style (blackish premium) */
+        body.dark-mode {
+            --bg-gradient-start: #0a0c14;
+            --bg-gradient-end: #05060c;
+            --card-bg: rgba(16, 18, 28, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f0f2fa;
+            --text-muted: #9ba0b5;
             --primary: #8c7ae6;
-            --primary-hover: #9c88ff;
+            --primary-hover: #a28eff;
             --accent: #48dbfb;
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            --input-bg: rgba(255, 255, 255, 0.03);
-            --input-focus: rgba(255, 255, 255, 0.08);
-            --tab-bg: rgba(255, 255, 255, 0.05);
-        }
-
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            --shadow: 0 20px 35px rgba(0, 0, 0, 0.5);
+            --input-bg: rgba(0, 0, 0, 0.4);
+            --trust-badge-bg: rgba(255, 255, 255, 0.05);
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at 30% 40%, var(--bg-gradient-start), var(--bg-gradient-end));
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden; /* prevents scrollbars on desktop */
+            margin: 0;
+            padding: 0;
+            transition: background 0.2s ease, color 0.2s;
+            color: var(--text-primary);
         }
 
+        /* main container - zero scroll guarantee */
         .auth-container {
-            display: flex;
             width: 100vw;
             height: 100vh;
-            background: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            overflow: hidden;
         }
 
-        /* Left Showcase */
-        .auth-showcase {
+        /* split card premium */
+        .split-card {
+            display: flex;
+            width: 100%;
+            max-width: 1280px;
+            height: 90vh;
+            max-height: 760px;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border-radius: 2rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--glass-border);
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        /* LEFT SHOWCASE - theme adaptive */
+        .showcase-panel {
             flex: 1.2;
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1618220179428-22790b46a011?q=80&w=1200&auto=format&fit=crop') center/cover;
-            position: relative;
+            background: linear-gradient(125deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.3)),
+                url('https://images.unsplash.com/photo-1618220179428-22790b46a011?q=80&w=1400&auto=format&fit=crop');
+            background-size: cover;
+            background-position: 30% 20%;
+            padding: 2rem;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 4rem;
+            position: relative;
         }
 
-        .auth-showcase::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to right, transparent 0%, var(--bg-color) 100%);
+        body.dark-mode .showcase-panel {
+            background: linear-gradient(135deg, rgba(10, 12, 22, 0.8), rgba(20, 22, 40, 0.85)),
+                url('https://images.unsplash.com/photo-1618220179428-22790b46a011?q=80&w=1400&auto=format&fit=crop');
+            background-size: cover;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            color: var(--text-primary);
+        }
+
+        .brand-logo i {
+            color: var(--primary);
+            filter: drop-shadow(0 0 6px var(--primary));
+        }
+
+        .showcase-quote h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            background: linear-gradient(125deg, #ffffff, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .showcase-quote p {
+            color: rgba(255, 255, 240, 0.85);
+            font-size: 0.9rem;
+            line-height: 1.45;
+            max-width: 85%;
+            margin-bottom: 1.5rem;
+        }
+
+        .trust-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--trust-badge-bg);
+            backdrop-filter: blur(5px);
+            padding: 0.5rem 1rem;
+            border-radius: 60px;
+            font-size: 0.75rem;
+            border: 0.5px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+
+        /* RIGHT FORM PANEL — theme adaptive */
+        .form-panel {
+            flex: 1;
+            padding: 1.6rem 2rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+
+        .form-panel::-webkit-scrollbar {
+            display: none;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            width: fit-content;
+            transition: 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+            transform: translateX(-3px);
+        }
+
+        .form-header-compact {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-header-compact h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .form-header-compact p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* modern tabs */
+        .auth-tabs-minimal {
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(128, 128, 128, 0.1);
+            border-radius: 50px;
+            padding: 0.25rem;
+            width: fit-content;
+            margin-bottom: 1.2rem;
+        }
+
+        .tab-mini {
+            padding: 0.45rem 1.4rem;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .tab-mini.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(108, 92, 231, 0.3);
+        }
+
+        .social-row-compact {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .social-btn-sm {
+            flex: 1;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: 0.2s;
+        }
+
+        .social-btn-sm:hover {
+            background: rgba(108, 92, 231, 0.15);
+            border-color: var(--primary);
+        }
+
+        .divider-micro {
+            display: flex;
+            align-items: center;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin: 0.8rem 0 1rem;
+        }
+
+        .divider-micro::before,
+        .divider-micro::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .input-group-sleek {
+            margin-bottom: 0.9rem;
+        }
+
+        .input-group-sleek label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            display: block;
+            color: var(--text-muted);
+        }
+
+        .input-icon-sleek {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon-sleek i:first-child {
+            position: absolute;
+            left: 0.8rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .input-icon-sleek input {
+            width: 100%;
+            padding: 0.65rem 0.8rem 0.65rem 2.2rem;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+
+        .input-icon-sleek input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.2);
+        }
+
+        .toggle-eye {
+            position: absolute;
+            right: 0.8rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .row-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            margin: 0.5rem 0 1rem;
+        }
+
+        .checkbox-sm {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--text-muted);
+        }
+
+        .btn-auth-solid {
+            width: 100%;
+            background: var(--primary);
+            border: none;
+            padding: 0.7rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 0.2rem;
+            box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+        }
+
+        .btn-auth-solid:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .error-msg-mini {
+            color: #ff6b6b;
+            font-size: 0.65rem;
+            min-height: 1.2rem;
+            text-align: center;
+            margin-top: 0.4rem;
+        }
+
+        .legal-footnote {
+            text-align: center;
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            margin-top: 0.8rem;
+        }
+
+        .auth-form.hidden {
+            display: none;
+        }
+
+        /* toast */
+        .toast-sleek {
+            position: fixed;
+            bottom: 1.2rem;
+            right: 1.2rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border-left: 3px solid var(--primary);
+            padding: 0.65rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+            z-index: 2000;
+            animation: fadeSlide 0.25s ease;
             pointer-events: none;
         }
 
-        .brand {
-            position: relative; font-size: 1.5rem; font-weight: 700; color: white;
-            display: flex; align-items: center; gap: 0.5rem; z-index: 10;
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
-        .brand .glow-icon { color: var(--primary); text-shadow: 0 0 12px var(--primary); }
+        /* Responsive: keep everything visible, no scroll */
+        @media (max-width: 850px) {
+            .split-card {
+                flex-direction: column;
+                height: 92vh;
+                max-height: none;
+            }
 
-        .showcase-content {
-            position: relative; z-index: 10; max-width: 500px;
-            margin-top: auto; margin-bottom: auto;
+            .showcase-panel {
+                padding: 1.2rem;
+                min-height: 200px;
+            }
+
+            .showcase-quote h1 {
+                font-size: 1.8rem;
+            }
+
+            .showcase-quote p {
+                max-width: 100%;
+                font-size: 0.8rem;
+            }
+
+            .form-panel {
+                padding: 1rem 1.5rem;
+                overflow-y: auto;
+            }
         }
 
-        .showcase-content h1 {
-            font-size: 3.5rem; line-height: 1.2; margin-bottom: 1.5rem; font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+        @media (max-height: 680px) {
+            .form-panel {
+                padding: 0.8rem 1.5rem;
+            }
+
+            .input-group-sleek {
+                margin-bottom: 0.7rem;
+            }
+
+            .btn-auth-solid {
+                padding: 0.55rem;
+            }
+
+            .form-header-compact h2 {
+                font-size: 1.5rem;
+            }
         }
 
-        .showcase-content p {
-            font-size: 1.1rem; color: rgba(255,255,255,0.85); line-height: 1.6; margin-bottom: 3rem;
-        }
-
-        .showcase-indicator { display: flex; gap: 0.5rem; }
-        .dot { width: 30px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; transition: 0.3s; }
-        .dot.active { background: var(--primary); width: 60px; }
-
-        /* Right Form Area */
-        .auth-form-area {
-            flex: 1; display: flex; align-items: center; justify-content: center;
-            padding: 2rem; position: relative; z-index: 10;
-            background: var(--bg-color);
-        }
-
-        .auth-form-wrapper { width: 100%; max-width: 420px; }
-
-        .back-link {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            color: var(--text-muted); text-decoration: none; font-size: 0.9rem; margin-bottom: 2rem; transition: color 0.2s;
-        }
-        .back-link:hover { color: var(--text-color); }
-
-        .auth-header { margin-bottom: 2rem; }
-        .auth-header h2 { font-size: 2rem; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-color); }
-        .auth-header p { color: var(--text-muted); }
-
-        .auth-tabs {
-            display: flex; background: var(--tab-bg); border-radius: 12px; padding: 0.3rem; margin-bottom: 2rem;
-        }
-        .auth-tab {
-            flex: 1; padding: 0.8rem; background: transparent; border: none;
-            color: var(--text-muted); font-weight: 500; border-radius: 8px; cursor: pointer; transition: 0.3s;
-        }
-        .auth-tab.active { background: var(--card-bg); color: var(--text-color); box-shadow: var(--shadow); }
-
-        .social-login { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
-        .social-btn {
-            display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.8rem;
-            background: transparent; border: 1px solid var(--border-color); border-radius: 10px;
-            color: var(--text-color); font-weight: 500; cursor: pointer; transition: 0.2s;
-        }
-        .social-btn:hover { background: var(--tab-bg); }
-        .social-btn img { width: 20px; height: 20px; }
-
-        .divider {
-            display: flex; align-items: center; text-align: center; color: var(--text-muted);
-            font-size: 0.85rem; margin-bottom: 1.5rem;
-        }
-        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border-color); }
-        .divider span { padding: 0 1rem; }
-
-        .auth-form { animation: fadeIn 0.4s ease-out; }
-        .auth-form.hidden { display: none; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .input-group { margin-bottom: 1.2rem; }
-        .input-group label {
-            display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 500;
-        }
-        .input-wrapper { position: relative; display: flex; align-items: center; }
-        .input-wrapper i.fa-envelope, .input-wrapper i.fa-lock, .input-wrapper i.fa-phone {
-            position: absolute; left: 1rem; color: var(--text-muted);
-        }
-        .input-wrapper input {
-            width: 100%; padding: 0.9rem 1rem 0.9rem 2.8rem;
-            background: var(--input-bg); border: 1px solid var(--border-color);
-            border-radius: 10px; color: var(--text-color); font-size: 1rem; outline: none; transition: 0.3s;
-        }
-        .input-wrapper input:focus { border-color: var(--primary); background: var(--input-focus); }
-        .toggle-password {
-            position: absolute; right: 1rem; background: none; border: none; color: var(--text-muted); cursor: pointer;
-        }
-        .toggle-password:hover { color: var(--text-color); }
-
-        .form-options {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; font-size: 0.85rem;
-        }
-        .remember-me { display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); cursor: pointer; }
-        .forgot-password { color: var(--primary); text-decoration: none; font-weight: 500; }
-        .forgot-password:hover { text-decoration: underline; }
-
-        .btn.primary-btn {
-            width: 100%; padding: 1rem; background: var(--primary); color: white; border: none;
-            border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3); display: flex; justify-content: center; align-items: center; gap: 0.5rem;
-        }
-        .btn.primary-btn:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4); }
-
-        .error-msg { color: var(--danger); font-size: 0.85rem; margin-top: 0.5rem; text-align: center; height: 1rem; }
-
-        /* Responsive Design */
-        @media(max-width: 900px) {
-            body { overflow: auto; /* allows scroll on mobile */ }
-            .auth-container { flex-direction: column; height: auto; min-height: 100vh; }
-            .auth-showcase { flex: none; height: 350px; padding: 2rem; }
-            .auth-showcase::before { background: linear-gradient(to bottom, transparent 0%, var(--bg-color) 100%); }
-            .showcase-content { max-width: 100%; margin-top: auto; }
-            .showcase-content h1 { font-size: 2.5rem; }
-            .auth-form-area { flex: none; padding: 2rem; }
-            .auth-form-wrapper { max-width: 100%; }
+        /* hide body overflow */
+        html,
+        body {
+            overflow: hidden;
+            height: 100%;
         }
     </style>
 </head>
+
 <body>
-    
-    <!-- Script to apply theme before rendering to avoid flash of wrong color -->
-    <script>
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        if (savedTheme === 'light') {
-            document.body.classList.remove('dark-mode');
-        } else {
-            document.body.classList.add('dark-mode');
-        }
-    </script>
-
     <div class="auth-container">
-        <!-- Left Showcase -->
-        <div class="auth-showcase">
-            <div class="brand">
-                <i class="fa-solid fa-store glow-icon"></i> Mini Store
-            </div>
-            
-            <div class="showcase-content">
-                <h1 class="gradient-text">Elevate Your Aesthetics</h1>
-                <p>Discover premium products curated to perfection with a seamless shopping experience. Join our community of aesthetic enthusiasts.</p>
-                <div class="showcase-indicator">
-                    <span class="dot active"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
+        <div class="split-card">
+            <!-- left side: showcase with contrast awareness -->
+            <div class="showcase-panel">
+                <div class="brand-logo">
+                    <i class="fa-solid fa-store"></i>
+                    <span>MINI STORE</span>
+                </div>
+                <div class="showcase-quote">
+                    <h1>Aesthetic<br>Essentials</h1>
+                    <p>Minimalist design meets premium shopping. Seamless & fluid experience.</p>
+                    <div class="trust-badge">
+                        <i class="fa-regular fa-gem"></i>
+                        <span>Curated • Premium • Secure</span>
+                    </div>
+                </div>
+                <div style="font-size: 0.6rem; opacity: 0.7;">
+                    <i class="fa-regular fa-shield-haltered"></i> protected ecosystem
                 </div>
             </div>
-        </div>
 
-        <!-- Right Form Area -->
-        <div class="auth-form-area">
-            <div class="auth-form-wrapper">
-                <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Store</a>
-                
-                <div class="auth-header">
-                    <h2>Welcome Back</h2>
-                    <p>Please enter your details to sign in.</p>
+            <!-- right panel: all auth forms -->
+            <div class="form-panel">
+                <a href="index.html" class="back-link">
+                    <i class="fa-solid fa-arrow-left"></i> Back to store
+                </a>
+                <div class="form-header-compact">
+                    <h2 id="headingDynamic">Welcome back</h2>
+                    <p id="subDynamic">Sign in to access your premium dashboard</p>
                 </div>
 
-                <div class="auth-tabs">
-                    <button class="auth-tab active" onclick="switchTab('login')">Log In</button>
-                    <button class="auth-tab" onclick="switchTab('register')">Sign Up</button>
+                <div class="auth-tabs-minimal">
+                    <button class="tab-mini active" data-formtype="login">Login</button>
+                    <button class="tab-mini" data-formtype="register">Sign up</button>
                 </div>
 
-                <div class="social-login">
-                    <button class="social-btn"><img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google"> Google</button>
-                    <button class="social-btn"><i class="fa-brands fa-apple" style="font-size: 1.2rem; margin-right: 5px;"></i> Apple</button>
+                <div class="social-row-compact">
+                    <div class="social-btn-sm" id="demoGoogleBtn"><i class="fa-brands fa-google"></i> Google</div>
+                    <div class="social-btn-sm" id="demoAppleBtn"><i class="fa-brands fa-apple"></i> Apple</div>
                 </div>
+                <div class="divider-micro"><span>or continue with email</span></div>
 
-                <div class="divider">
-                    <span>or continue with email</span>
-                </div>
-
-                <!-- Login Form -->
-                <form id="login-form" class="auth-form active">
-                    <div class="input-group">
-                        <label for="login-email">Email Address</label>
-                        <div class="input-wrapper">
+                <!-- LOGIN FORM -->
+                <form id="loginFormUI" class="auth-form">
+                    <div class="input-group-sleek">
+                        <label>Email Address</label>
+                        <div class="input-icon-sleek">
                             <i class="fa-regular fa-envelope"></i>
-                            <input type="email" id="login-email" placeholder="Enter your email" required>
+                            <input type="email" id="loginEmailField" placeholder="hello@minimist.com"
+                                autocomplete="email">
                         </div>
                     </div>
-                    <div class="input-group">
-                        <label for="login-password">Password</label>
-                        <div class="input-wrapper">
+                    <div class="input-group-sleek">
+                        <label>Password</label>
+                        <div class="input-icon-sleek">
                             <i class="fa-solid fa-lock"></i>
-                            <input type="password" id="login-password" placeholder="••••••••" required>
-                            <button type="button" class="toggle-password"><i class="fa-regular fa-eye"></i></button>
+                            <input type="password" id="loginPassField" placeholder="••••••••">
+                            <button type="button" class="toggle-eye" data-target="loginPassField"><i
+                                    class="fa-regular fa-eye"></i></button>
                         </div>
                     </div>
-                    <div class="form-options">
-                        <label class="remember-me">
-                            <input type="checkbox"> <span>Remember me</span>
-                        </label>
-                        <a href="#" class="forgot-password">Forgot Password?</a>
+                    <div class="row-options">
+                        <label class="checkbox-sm"><input type="checkbox" id="rememberCheck"> <span>Keep me signed
+                                in</span></label>
+                        <a href="#" id="forgotLink"
+                            style="color: var(--primary); text-decoration: none; font-size:0.7rem;">Forgot password?</a>
                     </div>
-                    <button type="submit" class="btn primary-btn">Sign In</button>
-                    <div id="login-error" class="error-msg"></div>
+                    <button type="submit" class="btn-auth-solid" id="loginBtnSubmit"><i
+                            class="fa-regular fa-paper-plane"></i> Sign in</button>
+                    <div id="loginErrorMsg" class="error-msg-mini"></div>
                 </form>
 
-                <!-- Register Form -->
-                <form id="register-form" class="auth-form hidden">
-                    <div class="input-group">
-                        <label for="reg-email">Email Address</label>
-                        <div class="input-wrapper">
+                <!-- REGISTER FORM -->
+                <form id="registerFormUI" class="auth-form hidden">
+                    <div class="input-group-sleek">
+                        <label>Email address</label>
+                        <div class="input-icon-sleek">
                             <i class="fa-regular fa-envelope"></i>
-                            <input type="email" id="reg-email" placeholder="Enter your email" required>
+                            <input type="email" id="regEmailField" placeholder="hello@minimist.com">
                         </div>
                     </div>
-                    <div class="input-group">
-                        <label for="reg-phone">Phone Number</label>
-                        <div class="input-wrapper">
+                    <div class="input-group-sleek">
+                        <label>Phone number</label>
+                        <div class="input-icon-sleek">
                             <i class="fa-solid fa-phone"></i>
-                            <input type="text" id="reg-phone" placeholder="Enter your phone number" required>
+                            <input type="tel" id="regPhoneField" placeholder="+1 234 567 8900">
                         </div>
                     </div>
-                    <div class="input-group">
-                        <label for="reg-password">Password</label>
-                        <div class="input-wrapper">
-                            <i class="fa-solid fa-lock"></i>
-                            <input type="password" id="reg-password" placeholder="Create a password" required>
-                            <button type="button" class="toggle-password"><i class="fa-regular fa-eye"></i></button>
+                    <div class="input-group-sleek">
+                        <label>Password (min. 8 chars)</label>
+                        <div class="input-icon-sleek">
+                            <i class="fa-solid fa-key"></i>
+                            <input type="password" id="regPassField" placeholder="Create password">
+                            <button type="button" class="toggle-eye" data-target="regPassField"><i
+                                    class="fa-regular fa-eye"></i></button>
                         </div>
                     </div>
-                    <button type="submit" class="btn primary-btn">Create Account</button>
-                    <div id="reg-error" class="error-msg"></div>
+                    <button type="submit" class="btn-auth-solid" id="registerBtnSubmit"><i
+                            class="fa-regular fa-user-plus"></i> Create account</button>
+                    <div id="regErrorMsg" class="error-msg-mini"></div>
+                    <div class="legal-footnote">By joining you agree to <span
+                            style="color: var(--primary);">Terms</span> & <span
+                            style="color: var(--primary);">Privacy</span>.</div>
                 </form>
             </div>
         </div>
     </div>
 
     <script>
-        const API_URL = 'http://localhost:5000';
-
-        function switchTab(tab) {
-            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.auth-form').forEach(f => f.classList.add('hidden'));
-            
-            if(tab === 'login') {
-                document.querySelectorAll('.auth-tab')[0].classList.add('active');
-                document.getElementById('login-form').classList.remove('hidden');
-                document.querySelector('.auth-header h2').innerText = 'Welcome Back';
-                document.querySelector('.auth-header p').innerText = 'Please enter your details to sign in.';
+        // ------------------- THEME SYNC (crucial: respect store's dark/light mode) -------------------
+        function initThemeFromStorage() {
+            const savedTheme = localStorage.getItem('theme');
+            // if theme is stored as 'light', remove dark-mode class, else add dark-mode (premium dark)
+            if (savedTheme === 'light') {
+                document.body.classList.remove('dark-mode');
             } else {
-                document.querySelectorAll('.auth-tab')[1].classList.add('active');
-                document.getElementById('register-form').classList.remove('hidden');
-                document.querySelector('.auth-header h2').innerText = 'Create an Account';
-                document.querySelector('.auth-header p').innerText = 'Join us to discover premium aesthetic products.';
+                // default dark if not set or 'dark'
+                document.body.classList.add('dark-mode');
             }
         }
+        // call on load
+        initThemeFromStorage();
 
-        // Toggle password visibility
-        document.querySelectorAll('.toggle-password').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const input = this.previousElementSibling;
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    this.innerHTML = '<i class="fa-regular fa-eye-slash"></i>';
-                } else {
-                    input.type = 'password';
-                    this.innerHTML = '<i class="fa-regular fa-eye"></i>';
+        // Also listen for storage changes (if user changes theme in another tab)
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'theme') {
+                if (e.newValue === 'light') document.body.classList.remove('dark-mode');
+                else document.body.classList.add('dark-mode');
+            }
+        });
+
+        // ---------- AUTH / API INTEGRATION (fully functional) ----------
+        const API_URL = 'http://localhost:5000';
+
+        // DOM references
+        const loginForm = document.getElementById('loginFormUI');
+        const registerForm = document.getElementById('registerFormUI');
+        const loginTab = document.querySelector('.tab-mini[data-formtype="login"]');
+        const registerTab = document.querySelector('.tab-mini[data-formtype="register"]');
+        const headingDynamic = document.getElementById('headingDynamic');
+        const subDynamic = document.getElementById('subDynamic');
+
+        function switchToLogin() {
+            loginForm.classList.remove('hidden');
+            registerForm.classList.add('hidden');
+            loginTab.classList.add('active');
+            registerTab.classList.remove('active');
+            headingDynamic.innerText = 'Welcome back';
+            subDynamic.innerText = 'Sign in to your premium dashboard';
+            document.getElementById('loginErrorMsg').innerText = '';
+        }
+
+        function switchToRegister() {
+            loginForm.classList.add('hidden');
+            registerForm.classList.remove('hidden');
+            registerTab.classList.add('active');
+            loginTab.classList.remove('active');
+            headingDynamic.innerText = 'Create an account';
+            subDynamic.innerText = 'Start your aesthetic journey';
+            document.getElementById('regErrorMsg').innerText = '';
+        }
+
+        loginTab.addEventListener('click', switchToLogin);
+        registerTab.addEventListener('click', switchToRegister);
+
+        // toggle password visibility
+        document.querySelectorAll('.toggle-eye').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('data-target');
+                const inputField = document.getElementById(targetId);
+                if (inputField) {
+                    const isPassword = inputField.type === 'password';
+                    inputField.type = isPassword ? 'text' : 'password';
+                    this.innerHTML = isPassword ? '<i class="fa-regular fa-eye-slash"></i>' : '<i class="fa-regular fa-eye"></i>';
                 }
             });
         });
 
-        // Handle Login
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
+        function showToast(message, isError = false) {
+            const toastDiv = document.createElement('div');
+            toastDiv.className = 'toast-sleek';
+            toastDiv.innerHTML = `<i class="fa-solid ${isError ? 'fa-circle-exclamation' : 'fa-circle-check'}" style="margin-right: 6px;"></i> ${message}`;
+            if (isError) toastDiv.style.borderLeftColor = '#ff7675';
+            document.body.appendChild(toastDiv);
+            setTimeout(() => toastDiv.remove(), 2800);
+        }
+
+        // LOGIN handler
+        async function handleLoginSubmit(e) {
             e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            const btn = e.target.querySelector('button[type="submit"]');
-            const errBox = document.getElementById('login-error');
-            const originalText = btn.innerHTML;
-            
-            errBox.innerText = '';
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing in...';
-            btn.disabled = true;
-            
+            const email = document.getElementById('loginEmailField').value.trim();
+            const pwd = document.getElementById('loginPassField').value;
+            const errorDiv = document.getElementById('loginErrorMsg');
+            const loginBtn = document.getElementById('loginBtnSubmit');
+            errorDiv.innerText = '';
+            if (!email || !pwd) {
+                errorDiv.innerText = 'Both email and password required.';
+                return;
+            }
+            const originalHtml = loginBtn.innerHTML;
+            loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing in...';
+            loginBtn.disabled = true;
             try {
                 const res = await fetch(`${API_URL}/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify({ email, password: pwd })
                 });
                 const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Login failed');
-                
+                if (!res.ok) throw new Error(data.error || 'Invalid credentials');
                 localStorage.setItem('token', data.access_token);
-                window.location.href = 'index.html'; // Redirect to dashboard
+                showToast('Login successful! Redirecting to store...');
+                setTimeout(() => { window.location.href = 'index.html'; }, 800);
             } catch (err) {
-                errBox.innerText = err.message;
-                btn.innerHTML = originalText;
-                btn.disabled = false;
+                errorDiv.innerText = err.message;
+                showToast(err.message, true);
+                loginBtn.innerHTML = originalHtml;
+                loginBtn.disabled = false;
             }
-        });
+        }
 
-        // Handle Registration
-        document.getElementById('register-form').addEventListener('submit', async (e) => {
+        // REGISTER handler
+        async function handleRegisterSubmit(e) {
             e.preventDefault();
-            const email = document.getElementById('reg-email').value;
-            const phone = document.getElementById('reg-phone').value;
-            const password = document.getElementById('reg-password').value;
-            const btn = e.target.querySelector('button[type="submit"]');
-            const errBox = document.getElementById('reg-error');
-            const originalText = btn.innerHTML;
-            
-            errBox.innerText = '';
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating...';
-            btn.disabled = true;
-
+            const email = document.getElementById('regEmailField').value.trim();
+            const phone = document.getElementById('regPhoneField').value.trim();
+            const password = document.getElementById('regPassField').value;
+            const errorDiv = document.getElementById('regErrorMsg');
+            const regBtn = document.getElementById('registerBtnSubmit');
+            errorDiv.innerText = '';
+            if (!email || !phone || !password) {
+                errorDiv.innerText = 'All fields are required.';
+                return;
+            }
+            if (password.length < 8) {
+                errorDiv.innerText = 'Password must be at least 8 characters.';
+                return;
+            }
+            const originalHtml = regBtn.innerHTML;
+            regBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating...';
+            regBtn.disabled = true;
             try {
                 const res = await fetch(`${API_URL}/auth/register`, {
                     method: 'POST',
@@ -410,17 +725,43 @@
                 });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error || 'Registration failed');
-                
-                alert('Registration successful! Please sign in.');
-                switchTab('login');
-                btn.innerHTML = 'Create Account';
-                btn.disabled = false;
+                showToast('Account created! Please sign in.');
+                // reset register fields and switch to login
+                document.getElementById('regEmailField').value = '';
+                document.getElementById('regPhoneField').value = '';
+                document.getElementById('regPassField').value = '';
+                switchToLogin();
             } catch (err) {
-                errBox.innerText = err.message;
-                btn.innerHTML = originalText;
-                btn.disabled = false;
+                errorDiv.innerText = err.message;
+                showToast(err.message, true);
+            } finally {
+                regBtn.innerHTML = originalHtml;
+                regBtn.disabled = false;
             }
+        }
+
+        loginForm.addEventListener('submit', handleLoginSubmit);
+        registerForm.addEventListener('submit', handleRegisterSubmit);
+
+        // social demo toasts
+        document.getElementById('demoGoogleBtn')?.addEventListener('click', () => showToast('Google sign-in (demo) — backend ready', false));
+        document.getElementById('demoAppleBtn')?.addEventListener('click', () => showToast('Apple ID integration preview', false));
+        document.getElementById('forgotLink')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            showToast('Password reset link would be sent (demo flow)', false);
         });
+
+        // ensure no scrolling, fix for resizing
+        function lockScroll() {
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
+        }
+        lockScroll();
+        window.addEventListener('resize', lockScroll);
+
+        // prefill theme consistency if there's any inline toggle (body class matches store)
+        // additionally observe any theme changes if user clicks toggle in other pages but on this page will load dark/light properly
     </script>
 </body>
+
 </html>

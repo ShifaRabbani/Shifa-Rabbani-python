@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body class="dark-mode"> <!-- Default to dark mode for the premium feel -->
 
     <header class="app-header">
@@ -22,7 +24,7 @@
                 <i class="fa-solid fa-store glow-icon"></i>
                 <span>Mini Store</span>
             </div>
-            
+
             <div class="header-search">
                 <input type="text" placeholder="Search premium products...">
                 <button><i class="fa-solid fa-search"></i></button>
@@ -45,7 +47,7 @@
                 </button>
             </div>
         </div>
-        
+
         <nav class="navbar-bottom">
             <ul class="nav-links">
                 <li><a href="#" class="nav-link active" data-target="home-section">Home</a></li>
@@ -103,7 +105,8 @@
                     </div>
                     <div class="checkout-form">
                         <input type="text" id="customer-info" placeholder="Shipping Address / Customer Info">
-                        <button id="checkout-btn" class="btn primary-btn full-width" disabled>Proceed to Checkout</button>
+                        <button id="checkout-btn" class="btn primary-btn full-width" disabled>Proceed to
+                            Checkout</button>
                     </div>
                 </div>
             </div>
@@ -119,18 +122,39 @@
                 <button class="tab-btn" data-tab="manage-stock">Stock</button>
                 <button class="tab-btn" data-tab="manage-invoices">Invoices</button>
             </div>
-            
+
+
+
             <div class="tab-content active" id="tab-manage-products">
                 <div class="glass-panel">
                     <h3>Add New Product</h3>
                     <form id="add-product-form" class="form-grid">
                         <input type="text" id="new-product-name" placeholder="Product Name" required>
                         <input type="number" id="new-product-price" placeholder="Price" step="0.01" required>
-                        <button type="submit" class="btn primary-btn">Add Product</button>
+                        <input type="text" id="new-product-category" placeholder="Category (e.g., Stationery, Snacks)"
+                            value="Uncategorized">
+                        <textarea id="new-product-description" placeholder="Product Description" rows="2"></textarea>
+
+                        <!-- Image Upload Area -->
+                        <div id="upload-area"
+                            style="border: 2px dashed var(--border-color); border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; grid-column: 1/-1;">
+                            <i class="fa-regular fa-image"></i>
+                            <p>Click to upload product image</p>
+                            <input type="file" id="product-image-input" accept="image/*" style="display: none;">
+                        </div>
+                        <div id="image-preview-container" style="grid-column: 1/-1;"></div>
+                        <input type="hidden" id="product-image-url">
+
+                        <button type="submit" class="btn primary-btn" style="grid-column: 1/-1;">Add Product</button>
                     </form>
                 </div>
                 <div id="admin-product-list" class="list-view"></div>
             </div>
+
+
+
+
+
 
             <div class="tab-content" id="tab-manage-stock">
                 <div class="glass-panel">
@@ -162,7 +186,8 @@
                     <i class="fa-solid fa-store glow-icon"></i>
                     <span>Mini Store</span>
                 </div>
-                <p>Bringing you the finest selection of premium products with a seamless, aesthetic shopping experience.</p>
+                <p>Bringing you the finest selection of premium products with a seamless, aesthetic shopping experience.
+                </p>
                 <div class="social-links">
                     <a href="#"><i class="fa-brands fa-instagram"></i></a>
                     <a href="#"><i class="fa-brands fa-twitter"></i></a>
@@ -200,5 +225,7 @@
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
     <script src="app.js"></script>
+
 </body>
+
 </html>
