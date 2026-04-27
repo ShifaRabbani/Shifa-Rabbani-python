@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, render_template
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 import os
@@ -10,14 +10,15 @@ from routes.invoice_route import invoice_bp
 from routes.auth_route import auth_bp
 
 def create_app():
-    app = Flask(__name__, static_folder='frontend', static_url_path='/')
+    # Fixed: Removed static_folder='frontend' since you deleted it
+    app = Flask(__name__)
     
     # Configure file upload
     app.config['UPLOAD_FOLDER'] = 'static/uploads'
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
     app.config["JWT_SECRET_KEY"] = "mini-store-secret-key-123"
     
-    # Create upload folder if it doesn't exist (FIXED)
+    # Create upload folder if it doesn't exist
     if not os.path.exists(app.config['UPLOAD_FOLDER']):
         os.makedirs(app.config['UPLOAD_FOLDER'])
     
@@ -26,7 +27,7 @@ def create_app():
 
     @app.route('/')
     def serve_frontend():
-        return app.send_static_file('index.html')
+        return render_template('index.html')
 
     @app.route('/health', methods=['GET'])
     def health():
@@ -66,7 +67,6 @@ def create_app():
     app.register_blueprint(auth_bp)
 
     return app
-
 app = create_app()
 
 if __name__ == '__main__':

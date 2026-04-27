@@ -9,6 +9,7 @@ from database.connection import get_engine
 
 product_bp = Blueprint("product_bp", __name__, url_prefix="/products")
 
+
 # Get all products (with images)
 @product_bp.route('', methods=['GET'])
 def list_products():

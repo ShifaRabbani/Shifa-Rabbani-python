@@ -8,9 +8,13 @@
     <meta name="description" content="A premium e-commerce and store management dashboard.">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <!-- FontAwesome for Icons -->
+
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
 </head>
 
 <body class="dark-mode"> <!-- Default to dark mode for the premium feel -->
@@ -224,7 +228,55 @@
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
-    <script src="app.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+
+    <script>
+        // Fetch and display products when page loads
+        fetch('http://localhost:5000/products')
+            .then(response => response.json())
+            .then(products => {
+                console.log('Products loaded:', products);
+
+                // Create container if doesn't exist
+                let container = document.getElementById('products-container');
+                if (!container) {
+                    container = document.createElement('div');
+                    container.id = 'products-container';
+                    document.body.appendChild(container);
+                }
+
+                // Display products
+                container.innerHTML = '<h2>Our Products</h2>';
+                products.forEach(product => {
+                    container.innerHTML += `
+                <div style="border:1px solid #ddd; margin:10px; padding:10px;">
+                    <h3>${product.name}</h3>
+                    <p>Price: $${product.price}</p>
+                    ${product.image_url ? `<img src="${product.image_url}" width="100">` : ''}
+                    <p>${product.description || ''}</p>
+                </div>
+            `;
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.body.innerHTML += '<p style="color:red">Error loading products. Make sure Flask is running on port 5000</p>';
+            });
+    </script>
+
+
+
+    <script>
+        // Fetch and display products
+        fetch('/products')
+            .then(response => response.json())
+            .then(products => {
+                console.log('Products:', products);
+                // Add code here to display products on your page
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
 
 </body>
 
