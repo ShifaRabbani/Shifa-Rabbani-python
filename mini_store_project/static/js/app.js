@@ -117,7 +117,7 @@ function showToast(message, isError = false) {
     setTimeout(() => toast.remove(), 3000);
 }
 
-function openAuthModal() { window.location.href = 'login.html'; }
+function openAuthModal() { window.location.href = '/login'; }
 function closeAuthModal() {
     const modal = document.getElementById('auth-fullscreen');
     if (modal) modal.classList.add('hidden');
