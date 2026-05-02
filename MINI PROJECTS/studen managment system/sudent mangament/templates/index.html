@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Result Management System | Modern Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <i class="fas fa-graduation-cap"></i> 
+                Student Result Management System
+            </h1>
+            
+            <div class="choice-box glass-card">
+                <p><i class="fas fa-cog"></i> Control Panel - Click Any Option</p>
+                <ul>
+                    <li onclick="selectChoice(1)">
+                        <i class="fas fa-user-plus"></i> 
+                        <strong>'1'</strong> Add Student
+                    </li>
+                    <li onclick="selectChoice(2)">
+                        <i class="fas fa-eye"></i> 
+                        <strong>'2'</strong> View All Students
+                    </li>
+                    <li onclick="selectChoice(3)">
+                        <i class="fas fa-edit"></i> 
+                        <strong>'3'</strong> Update Student
+                    </li>
+                    <li onclick="selectChoice(4)">
+                        <i class="fas fa-trash-alt"></i> 
+                        <strong>'4'</strong> Delete Student
+                    </li>
+                    <li onclick="selectChoice(5)">
+                        <i class="fas fa-chart-line"></i> 
+                        <strong>'5'</strong> Check Result
+                    </li>
+                </ul>
+                <div class="choice-input-wrapper">
+                    <input type="number" id="Choice" placeholder="Or enter number (1-5)" min="1" max="5">
+                </div>
+            </div>
+
+            <div class="input-box glass-card" id="inputBox">
+                <div id="dynamicInputs">
+                    <div class="input-group">
+                        <label id="inputLabel">
+                            <i class="fas fa-user"></i> Student Name
+                        </label>
+                        <input type="text" id="StudentName" placeholder="Enter student name">
+                    </div>
+                    <div class="input-group" id="marksGroup" style="display: none;">
+                        <label>
+                            <i class="fas fa-chart-simple"></i> Marks (0-100)
+                        </label>
+                        <input type="number" id="StudentMarks" placeholder="Enter marks" min="0" max="100">
+                    </div>
+                </div>
+                <button type="button" id="actionBtn">
+                    <i class="fas fa-check-circle"></i> Submit
+                </button>
+            </div>
+
+            <div id="resultDisplay" class="result-box">
+                <div class="info">
+                    <i class="fas fa-info-circle"></i> Click on any option above to get started
+                </div>
+            </div>
+        </header>
+        
+        <footer>
+            <p><i class="far fa-copyright"></i> 2026 Student Result Management System | Built with <i class="fas fa-heart"></i> for Education</p>
+        </footer>
+    </div>
+
+    <script>
+        let currentChoice = null;
+
+        // Get DOM elements
+        const choiceInput = document.getElementById("Choice");
+        const nameInput = document.getElementById("StudentName");
+        const marksInput = document.getElementById("StudentMarks");
+        const marksGroup = document.getElementById("marksGroup");
+        const actionBtn = document.getElementById("actionBtn");
+        const inputLabel = document.getElementById("inputLabel");
+        const resultDisplay = document.getElementById("resultDisplay");
+
+        // Function to select choice - Called when clicking on list items
+        function selectChoice(choice) {
+            currentChoice = choice.toString();
+            choiceInput.value = choice;
+            updateUIForChoice(currentChoice);
+            
+            // Add visual feedback
+            const listItems = document.querySelectorAll('.choice-box li');
+            const clickedItem = event.target.closest('li');
+            clickedItem.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                clickedItem.style.transform = 'scale(1)';
+            }, 200);
+        }
+
+        // Function to update UI based on choice
+        function updateUIForChoice(choice) {
+            // Reset visibility
+            marksGroup.style.display = "none";
+            nameInput.style.display = "block";
+            nameInput.value = "";
+            marksInput.value = "";
+            resultDisplay.innerHTML = '<div class="info"><i class="fas fa-info-circle"></i> Ready to process your request</div>';
+            
+            // Update UI based on choice
+            switch(choice) {
+                case "1": // Add Student
+                    inputLabel.innerHTML = '<i class="fas fa-user-plus"></i> Student Name';
+                    marksGroup.style.display = "block";
+                    actionBtn.innerHTML = '<i class="fas fa-save"></i> Add Student';
+                    nameInput.placeholder = "Enter student name";
+                    marksInput.placeholder = "Enter marks (0-100)";
+                    showToast("Add Student Mode: Enter name and marks", "info");
+                    break;
+                case "2": // View All Students
+                    inputLabel.innerHTML = '<i class="fas fa-eye"></i> View All Records';
+                    nameInput.style.display = "none";
+                    actionBtn.innerHTML = '<i class="fas fa-list"></i> View All Students';
+                    showToast("View Mode: Click button to see all students", "info");
+                    break;
+                case "3": // Update Student
+                    inputLabel.innerHTML = '<i class="fas fa-edit"></i> Student Name to Update';
+                    marksGroup.style.display = "block";
+                    actionBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Update Marks';
+                    nameInput.placeholder = "Enter student name";
+                    marksInput.placeholder = "Enter new marks";
+                    showToast("Update Mode: Enter name and new marks", "info");
+                    break;
+                case "4": // Delete Student
+                    inputLabel.innerHTML = '<i class="fas fa-trash-alt"></i> Student Name to Delete';
+                    marksGroup.style.display = "none";
+                    actionBtn.innerHTML = '<i class="fas fa-trash"></i> Delete Student';
+                    nameInput.placeholder = "Enter student name";
+                    showToast("Delete Mode: Enter name to delete", "info");
+                    break;
+                case "5": // Check Single Result
+                    inputLabel.innerHTML = '<i class="fas fa-chart-line"></i> Student Name';
+                    marksGroup.style.display = "none";
+                    actionBtn.innerHTML = '<i class="fas fa-search"></i> Check Result';
+                    nameInput.placeholder = "Enter student name";
+                    showToast("Result Mode: Enter name to check result", "info");
+                    break;
+                default:
+                    actionBtn.innerHTML = '<i class="fas fa-check-circle"></i> Submit';
+                    nameInput.style.display = "block";
+            }
+        }
+
+        // When manual number is entered
+        choiceInput.addEventListener("change", function() {
+            const choice = choiceInput.value;
+            if (choice >= 1 && choice <= 5) {
+                currentChoice = choice;
+                updateUIForChoice(currentChoice);
+            } else if (choice) {
+                showToast("Please enter number between 1-5", "error");
+                choiceInput.value = "";
+            }
+        });
+
+        // Handle button click
+        actionBtn.addEventListener("click", async function() {
+            if (!currentChoice) {
+                showToast("Please select an option from Control Panel first", "error");
+                return;
+            }
+            
+            const name = nameInput.value.trim();
+            const marks = marksInput.value;
+            
+            // Validation
+            if (currentChoice !== "2") {
+                if (!name) {
+                    showToast("Please enter student name", "error");
+                    return;
+                }
+            }
+            
+            if (currentChoice === "1" && (!marks || marks < 0 || marks > 100)) {
+                showToast("Please enter valid marks between 0-100", "error");
+                return;
+            }
+            
+            if (currentChoice === "3" && (!marks || marks < 0 || marks > 100)) {
+                showToast("Please enter valid new marks between 0-100", "error");
+                return;
+            }
+            
+            setLoading(true);
+            
+            switch(currentChoice) {
+                case "1": 
+                    await addStudent(name, marks);
+                    break;
+                case "2": 
+                    await viewAllStudents();
+                    break;
+                case "3": 
+                    await updateStudent(name, marks);
+                    break;
+                case "4": 
+                    if (confirm(`⚠️ Are you sure you want to delete "${name}"? This action cannot be undone.`)) {
+                        await deleteStudent(name);
+                    }
+                    break;
+                case "5": 
+                    await checkSingleStudent(name);
+                    break;
+            }
+            
+            setLoading(false);
+        });
+        
+        // Loading state
+        function setLoading(isLoading) {
+            if (isLoading) {
+                actionBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                actionBtn.disabled = true;
+            } else {
+                if (currentChoice === "1") actionBtn.innerHTML = '<i class="fas fa-save"></i> Add Student';
+                else if (currentChoice === "2") actionBtn.innerHTML = '<i class="fas fa-list"></i> View All Students';
+                else if (currentChoice === "3") actionBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Update Marks';
+                else if (currentChoice === "4") actionBtn.innerHTML = '<i class="fas fa-trash"></i> Delete Student';
+                else if (currentChoice === "5") actionBtn.innerHTML = '<i class="fas fa-search"></i> Check Result';
+                else actionBtn.innerHTML = '<i class="fas fa-check-circle"></i> Submit';
+                actionBtn.disabled = false;
+            }
+        }
+        
+        // Toast notification function
+        function showToast(message, type = "success") {
+            const toast = document.createElement("div");
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i> ${message}`;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = "slideOutRight 0.5s ease-out";
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+        
+        // Display result
+        function displayResult(html, isError = false) {
+            resultDisplay.innerHTML = html;
+            resultDisplay.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+        
+        // API Functions
+        async function addStudent(name, marks) {
+            try {
+                const response = await fetch('/api/add_student', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name: name, marks: parseInt(marks)})
+                });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showToast(`✅ ${data.message}`, "success");
+                    displayResult(`
+                        <div class="success">
+                            <i class="fas fa-trophy"></i>
+                            <strong>Student Added Successfully!</strong><br>
+                            📘 Name: ${name}<br>
+                            📊 Marks: ${marks}/100<br>
+                            🎯 Result: <span class="${data.result === 'Pass' ? 'pass' : 'fail'}">${data.result}</span>
+                        </div>
+                    `);
+                    nameInput.value = "";
+                    marksInput.value = "";
+                } else {
+                    showToast(`❌ ${data.error}`, "error");
+                    displayResult(`<div class="error"><i class="fas fa-exclamation-triangle"></i> ${data.error}</div>`, true);
+                }
+            } catch(error) {
+                showToast("Network error: " + error.message, "error");
+            }
+        }
+        
+        async function viewAllStudents() {
+            try {
+                const response = await fetch('/api/get_students');
+                const students = await response.json();
+                
+                if (students.length === 0) {
+                    displayResult(`
+                        <div class="info">
+                            <i class="fas fa-inbox"></i><br>
+                            <strong>No students found</strong><br>
+                            Click 'Add Student' to add your first student
+                        </div>
+                    `);
+                    showToast("No students in database", "info");
+                } else {
+                    let html = `
+                        <div style="overflow-x: auto;">
+                            <h3 style="text-align: center; margin-bottom: 15px;">
+                                <i class="fas fa-users"></i> Student Records
+                            </h3>
+                            <table class="student-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Student Name</th>
+                                        <th>Marks</th>
+                                        <th>Result</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    
+                    students.forEach(s => {
+                        html += `
+                            <tr>
+                                <td>${s.id}</td>
+                                <td><i class="fas fa-user-graduate"></i> ${s.name}</td>
+                                <td>${s.marks}/100</td>
+                                <td><span class="${s.result === 'Pass' ? 'pass' : 'fail'}">${s.result === 'Pass' ? '✓ PASSED' : '✗ FAILED'}</span></td>
+                            </tr>
+                        `;
+                    });
+                    
+                    const passCount = students.filter(s => s.result === 'Pass').length;
+                    const failCount = students.filter(s => s.result === 'Fail').length;
+                    
+                    html += `
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="stats">
+                            <i class="fas fa-chart-bar"></i> 
+                            Total: ${students.length} | 
+                            <span style="color: #4caf50;">Pass: ${passCount}</span> | 
+                            <span style="color: #f44336;">Fail: ${failCount}</span>
+                        </div>
+                    `;
+                    
+                    displayResult(html);
+                    showToast(`Found ${students.length} student(s)`, "success");
+                }
+            } catch(error) {
+                showToast("Error fetching students: " + error.message, "error");
+            }
+        }
+        
+        async function updateStudent(name, newMarks) {
+            try {
+                const response = await fetch('/api/update_student', {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name: name, marks: parseInt(newMarks)})
+                });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showToast(`✅ ${data.message}`, "success");
+                    displayResult(`
+                        <div class="success">
+                            <i class="fas fa-sync-alt"></i>
+                            <strong>Student Updated!</strong><br>
+                            📘 ${name}<br>
+                            📊 New Marks: ${newMarks}/100<br>
+                            🎯 New Result: <span class="${data.new_result === 'Pass' ? 'pass' : 'fail'}">${data.new_result}</span>
+                        </div>
+                    `);
+                    nameInput.value = "";
+                    marksInput.value = "";
+                } else {
+                    showToast(`❌ ${data.error}`, "error");
+                    displayResult(`<div class="error"><i class="fas fa-exclamation-triangle"></i> ${data.error}</div>`, true);
+                }
+            } catch(error) {
+                showToast("Network error: " + error.message, "error");
+            }
+        }
+        
+        async function deleteStudent(name) {
+            try {
+                const response = await fetch(`/api/delete_student/${encodeURIComponent(name)}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showToast(`✅ ${data.message}`, "success");
+                    displayResult(`
+                        <div class="success">
+                            <i class="fas fa-trash-alt"></i>
+                            <strong>Student Deleted Successfully</strong><br>
+                            🗑️ ${name} has been removed from the database
+                        </div>
+                    `);
+                    nameInput.value = "";
+                } else {
+                    showToast(`❌ ${data.error}`, "error");
+                    displayResult(`<div class="error"><i class="fas fa-exclamation-triangle"></i> ${data.error}</div>`, true);
+                }
+            } catch(error) {
+                showToast("Network error: " + error.message, "error");
+            }
+        }
+        
+        async function checkSingleStudent(name) {
+            try {
+                const response = await fetch(`/api/get_student/${encodeURIComponent(name)}`);
+                const student = await response.json();
+                
+                if (response.ok) {
+                    const resultIcon = student.result === 'Pass' ? '🏆' : '📚';
+                    const resultText = student.result === 'Pass' ? 'PASSED' : 'FAILED';
+                    
+                    showToast(`Result for ${student.name}: ${student.result}`, student.result === 'Pass' ? "success" : "error");
+                    displayResult(`
+                        <div class="success">
+                            <i class="fas fa-chart-line"></i>
+                            <strong>Student Result Card</strong><br><br>
+                            <div class="result-card">
+                                <div class="result-icon">${resultIcon}</div>
+                                <div><strong>Name:</strong> ${student.name}</div>
+                                <div><strong>Marks:</strong> ${student.marks}/100</div>
+                                <div><strong>Result:</strong> <span class="${student.result === 'Pass' ? 'pass' : 'fail'}">${resultText}</span></div>
+                                <div class="message">
+                                    ${student.result === 'Pass' ? 
+                                        '<i class="fas fa-star"></i> Congratulations! Keep it up! <i class="fas fa-star"></i>' : 
+                                        '<i class="fas fa-chart-line"></i> Need improvement! Work harder! <i class="fas fa-chart-line"></i>'}
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                } else {
+                    showToast(`❌ ${student.error}`, "error");
+                    displayResult(`<div class="error"><i class="fas fa-user-slash"></i> ${student.error}</div>`, true);
+                }
+            } catch(error) {
+                showToast("Error: " + error.message, "error");
+            }
+        }
+        
+        // Add CSS for toast notifications and animations
+        const style = document.createElement('style');
+        style.textContent = `
+            .toast {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+                z-index: 10000;
+                animation: slideInRight 0.3s ease-out;
+                font-family: 'Poppins', sans-serif;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .toast.success {
+                background: linear-gradient(135deg, #4caf50, #45a049);
+                color: white;
+            }
+            .toast.error {
+                background: linear-gradient(135deg, #f44336, #e53935);
+                color: white;
+            }
+            .toast.info {
+                background: linear-gradient(135deg, #2196f3, #1976d2);
+                color: white;
+            }
+            @keyframes slideInRight {
+                from {
+                    opacity: 0;
+                    transform: translateX(100px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            @keyframes slideOutRight {
+                from {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(100px);
+                }
+            }
+            .choice-box li {
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            .choice-box li:hover {
+                transform: translateX(5px) scale(1.05);
+                background: rgba(255, 255, 255, 0.3);
+            }
+            .choice-box li:active {
+                transform: scale(0.98);
+            }
+            .student-table {
+                width: 100%;
+                border-collapse: collapse;
+                background: white;
+                border-radius: 10px;
+                overflow: hidden;
+            }
+            .student-table th {
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: white;
+                padding: 12px;
+                text-align: left;
+            }
+            .student-table td {
+                padding: 10px 12px;
+                color: #333;
+                border-bottom: 1px solid #eee;
+            }
+            .stats {
+                margin-top: 15px;
+                text-align: center;
+                padding: 10px;
+                background: rgba(255,255,255,0.1);
+                border-radius: 10px;
+            }
+            .result-card {
+                background: rgba(255,255,255,0.1);
+                padding: 20px;
+                border-radius: 15px;
+                text-align: center;
+            }
+            .result-icon {
+                font-size: 3em;
+                margin-bottom: 15px;
+            }
+            .message {
+                margin-top: 15px;
+                font-style: italic;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
